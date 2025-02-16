@@ -1,4 +1,4 @@
-# lscs-tomo-api
+# lscs-member-validation-api
 
 This repository handles the backend for validating LSCS Members.
 
