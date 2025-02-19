@@ -2,7 +2,7 @@ import { validateMemberbyEmail } from "./auth.js";
 import lscscore from "lscs-core";
 import pool from "../config/connectdb.js";
 
-export const createEvent = async function(req, res) {
+export const createEvent = async function (req, res) {
   const { email, event_name } = req.body;
   const lscs = new lscscore(process.env.LSCS_AUTH_KEY);
 
@@ -41,13 +41,13 @@ export const createEvent = async function(req, res) {
   }
 };
 
-export const getEvent = async function(req, res) {
-  const { event } = req.query;
+export const getEvent = async function (req, res) {
+  const { id } = req.query;
 
   try {
     pool.query(
-      `SELECT * FROM events WHERE event_name=?`,
-      [event],
+      `SELECT * FROM events WHERE id=?`,
+      [id],
       async (insertErr, queryResult) => {
         if (insertErr) {
           console.error("Select process error:", insertErr.message);
@@ -59,6 +59,7 @@ export const getEvent = async function(req, res) {
         }
 
         const committee = queryResult[0].committee;
+        const event = queryResult[0].event_name;
 
         return res.status(200).json({
           event,
@@ -74,7 +75,7 @@ export const getEvent = async function(req, res) {
   }
 };
 
-export const getEvents = async function(req, res) {
+export const getEvents = async function (req, res) {
   try {
     pool.query(`SELECT * FROM events`, async (insertErr, queryResult) => {
       if (insertErr) {
