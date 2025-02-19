@@ -1,11 +1,11 @@
-import { validateMember } from "./auth.js";
+import { validateMemberbyID } from "./auth.js";
 import pool from "../config/connectdb.js";
 
 export const checkStatus = async function (req, res) {
   const { studentId } = req.query;
 
   try {
-    const result = await validateMember(parseInt(studentId));
+    const result = await validateMemberbyID(parseInt(studentId));
 
     if (!result) {
       return res.status(404).send({ message: "Member not found." });
@@ -50,10 +50,9 @@ export const checkStatus = async function (req, res) {
 };
 
 export const claimByMemberId = async function (req, res) {
-  const { studentId } = req.body;
-  console.log("Validating student ID:", studentId);
+  const { studentId, event } = req.body;
   try {
-    const result = await validateMember(parseInt(studentId));
+    const result = await validateMemberbyID(parseInt(studentId));
 
     if (!result) {
       return res.status(404).json({ message: "Member not found." });
@@ -70,8 +69,8 @@ export const claimByMemberId = async function (req, res) {
     } = result;
 
     pool.query(
-      `INSERT INTO general_scans (student_id, scanned_at) VALUES (?, NOW())`,
-      [studentId],
+      `INSERT INTO general_scans (student_id, scanned_at, event) VALUES (?, NOW(), ?)`,
+      [studentId, event],
       (insertErr) => {
         if (insertErr) {
           console.error("Insert process error:", insertErr.message);
@@ -90,7 +89,8 @@ export const claimByMemberId = async function (req, res) {
             position_name,
             division_name,
           },
-          claim: "Member claim recorded.",
+          claim: `Member claim recorded at ${event}`,
+          event: event,
         });
       },
     );
