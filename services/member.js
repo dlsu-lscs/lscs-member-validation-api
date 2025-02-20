@@ -1,5 +1,6 @@
 import { validateMemberbyID } from "./auth.js";
 import pool from "../config/connectdb.js";
+import lscscore from "lscs-core";
 
 export const checkStatus = async function (req, res) {
   const { studentId } = req.query;
@@ -99,5 +100,35 @@ export const claimByMemberId = async function (req, res) {
     res
       .status(500)
       .json({ message: "Error validating member.", error: err.message });
+  }
+};
+
+export const verifyStudent = async function (req, res) {
+  const { email } = req.body;
+  const lscs = new lscscore(process.env.LSCS_AUTH_KEY);
+
+  try {
+    const result = await lscs.findMemberByEmail(email);
+
+    if (!result) {
+      return res.status(404).send({ message: "lscs-core error FUCK U ZEL." });
+    }
+
+    const { committee_id } = result;
+
+    if (committee_id == "MEM") {
+      return res.status(200).send({
+        status: "member",
+      });
+    } else {
+      return res.status(200).send({
+        status: "officer",
+      });
+    }
+  } catch (err) {
+    console.error("Error during verification.", err.message);
+    res
+      .status(500)
+      .send({ message: "Error during verification", error: err.message });
   }
 };

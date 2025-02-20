@@ -1,4 +1,3 @@
-import { validateMemberbyEmail } from "./auth.js";
 import lscscore from "lscs-core";
 import pool from "../config/connectdb.js";
 
@@ -94,5 +93,35 @@ export const getEvents = async function (req, res) {
     res
       .status(500)
       .json({ message: "Error during MYSQL selection.", error: err.message });
+  }
+};
+
+export const deleteEvent = async function (req, res) {
+  const { event } = req.query;
+
+  try {
+    pool.query(
+      `DELETE FROM events WHERE event_name=?`,
+      [event],
+      (deleteErr) => {
+        if (deleteErr) {
+          console.error("Delete process error:", insertErr.message);
+
+          return res.status(500).json({
+            message: "Error deleting data into DB",
+            error: deleteErr.message,
+          });
+        }
+
+        return res.status(200).send({
+          status: `${event} event deleted.`,
+        });
+      },
+    );
+  } catch (err) {
+    console.error("Error during inserting record.", err.message);
+    res
+      .status(500)
+      .json({ message: "Error during MYSQL insertion.", error: err.message });
   }
 };
