@@ -1,7 +1,7 @@
 import lscscore from "lscs-core";
 import pool from "../config/connectdb.js";
 
-export const createEvent = async function(req, res) {
+export const createEvent = async function (req, res) {
   const { email, event_name } = req.body;
   const lscs = new lscscore(process.env.LSCS_AUTH_KEY);
 
@@ -40,7 +40,7 @@ export const createEvent = async function(req, res) {
   }
 };
 
-export const getEvent = async function(req, res) {
+export const getEvent = async function (req, res) {
   const { id } = req.query;
 
   try {
@@ -74,7 +74,7 @@ export const getEvent = async function(req, res) {
   }
 };
 
-export const getEvents = async function(req, res) {
+export const getEvents = async function (req, res) {
   try {
     pool.query(`SELECT * FROM events`, async (insertErr, queryResult) => {
       if (insertErr) {
@@ -96,20 +96,23 @@ export const getEvents = async function(req, res) {
   }
 };
 
-export const deleteEvent = async function(req, res) {
+export const deleteEvent = async function (req, res) {
   const { event } = req.body;
 
   try {
     pool.query(
       `DELETE FROM events WHERE event_name=?`,
       [event],
-      (deleteErr) => {
-        if (deleteErr) {
-          console.error("Delete process error:", insertErr.message);
+      (deleteErr, queryResult) => {
+        if (deleteErr || queryResult.affectedRows < 1) {
+          console.error(
+            "Delete process error:",
+            deleteErr?.message || "Affected rows: 0",
+          );
 
           return res.status(500).json({
-            message: "Error deleting data into DB",
-            error: deleteErr.message,
+            message: "Error deleting data into DB or event was not deleted.",
+            error: deleteErr?.message,
           });
         }
 
