@@ -14,6 +14,6 @@ router.get("/status", checkStatus);
 router.post("/add-event", createEvent);
 router.get("/event", getEvent);
 router.get("/events", getEvents);
-router.delete("/delete-event", deleteEvent);
+router.post("/delete-event", deleteEvent);
 
 export default router;
