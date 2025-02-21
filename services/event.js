@@ -1,7 +1,7 @@
 import lscscore from "lscs-core";
 import pool from "../config/connectdb.js";
 
-export const createEvent = async function (req, res) {
+export const createEvent = async function(req, res) {
   const { email, event_name } = req.body;
   const lscs = new lscscore(process.env.LSCS_AUTH_KEY);
 
@@ -40,7 +40,7 @@ export const createEvent = async function (req, res) {
   }
 };
 
-export const getEvent = async function (req, res) {
+export const getEvent = async function(req, res) {
   const { id } = req.query;
 
   try {
@@ -74,7 +74,7 @@ export const getEvent = async function (req, res) {
   }
 };
 
-export const getEvents = async function (req, res) {
+export const getEvents = async function(req, res) {
   try {
     pool.query(`SELECT * FROM events`, async (insertErr, queryResult) => {
       if (insertErr) {
@@ -96,8 +96,8 @@ export const getEvents = async function (req, res) {
   }
 };
 
-export const deleteEvent = async function (req, res) {
-  const { event } = req.query;
+export const deleteEvent = async function(req, res) {
+  const { event } = req.body;
 
   try {
     pool.query(
